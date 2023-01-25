@@ -1,8 +1,9 @@
 let total = 0;
 
-function Player(currentScore, currentRoll, totalScore){
+//Business Logic
+
+function Player(currentRoll, totalScore){
   this.currentRoll = currentRoll;
-  this.currentScore = currentScore;
   this.totalScore = totalScore;
 }
 
@@ -18,20 +19,31 @@ function generateTotalScore(result){
 
 // UI Logic
 
+function handleHold(){
+  document.getElementById("play1").disabled = true;
+  document.getElementById("hold1").disabled = true;
+  document.getElementById("play2").disabled = false;
+  document.getElementById("hold2").disabled = false;
+}
+
 function handlePlaySubmission(event){
   event.preventDefault();
 
 
-  const result = rollDice();
-  let printDiceTotal = "Current Score: " + generateTotalScore(result);
-
+  const currentRoll = rollDice();
+  let totalScore = "Current Score: " + generateTotalScore(currentRoll);
+  let player1 = new Player(currentRoll, totalScore);
   
-  document.querySelector("div#rollP1").innerText = " Current Roll: " + result;
-  document.querySelector("div#scoreP1").innerText = printDiceTotal;
+  document.querySelector("div#rollP1").innerText = " Current Roll: " + player1.currentRoll;
+  document.querySelector("div#scoreP1").innerText = player1.totalScore;
 
 }
 
 window.addEventListener("load", function() {
-  document.querySelector("form#game").addEventListener("submit", handlePlaySubmission);
+  let holdButton = document.querySelector("button#hold1");
+  document.querySelector("form#game1").addEventListener("submit", handlePlaySubmission);
+  holdButton.addEventListener("click", handleHold);
+  document.querySelector("form#game2").addEventListener("submit", handlePlaySubmission);
+
 })
 
