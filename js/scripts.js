@@ -23,13 +23,19 @@ ScoresDB.prototype.findPlayer = function(id) {
   return false;
 };
 
-Player.prototype.addTotal = function() {
-  this.currentId += 1;
-  return this.currentId;
-};
+Player.prototype.addScore = function(scoreDBInstance, currentScore) {
+
+  Object.keys(scoreDBInstance.players).forEach(function(key) {
+    const player = scoreDBInstance.findPlayer(key);
+    player.totalScore = currentScore;
+  });
+  
+  
+  
+  player.totalScore = total + currentScore;
+}
 
 function Player(currentRoll, currentScore, totalScore){
-  
   this.currentRoll = currentRoll;
   this.currentScore = currentScore;
   this.totalScore = totalScore;
@@ -46,9 +52,7 @@ function generateTotalScore(currentRoll){
 };
 
 // UI Logic
-
-
-function handleHold(currentScore){
+function handleHold(currentRoll){
   const player1 = scoresDB.findPlayer(1);
   let totalScore1 = player1.currentScore;
     document.getElementById("play1").disabled = true;
@@ -56,13 +60,11 @@ function handleHold(currentScore){
     window.alert("current score:" + totalScore1);
 }
 
-function handlePlaySubmission(event){
-  event.preventDefault();
+function handlePlaySubmission(currentRoll){
   let totalScore = total;
-  const currentRoll = rollDice();
   let currentScore = generateTotalScore(currentRoll);
+
   let player1 = new Player(currentRoll, currentScore, totalScore);
-  handleHold(currentScore);
   scoresDB.addPlayer(player1);
 
 
@@ -76,19 +78,29 @@ function handlePlaySubmission(event){
 }
   
   else {
+    
+    let foundPlayer = scoresDB.findPlayer(1);
+    player1.addScore(foundPlayer, currentScore);
     document.querySelector("div#rollP1").innerText = "Current Roll: " + player1.currentRoll;
     document.querySelector("div#scoreP1").innerText = "Current Score: " + player1.currentScore;
   }
 
 }
 
-window.addEventListener("load", function() {
+window.addEventListener("load", function(event) {
+
+  const currentRoll = rollDice();
   let holdButton = document.querySelector("button#hold1");
-  document.querySelector("form#game1").addEventListener("submit", handlePlaySubmission);
+  document.querySelector("form#game1").addEventListener("submit", function(event){
+    handlePlaySubmission(currentRoll);
+    event.preventDefault();
+  });
   
   
   
-  holdButton.addEventListener("click", handleHold);
+  holdButton.addEventListener("click", function(event){
+    handleHold(currentRoll);
+  });
   // document.querySelector("form#game2").addEventListener("submit", handlePlaySubmission);
 
 })
