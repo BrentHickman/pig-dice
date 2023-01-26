@@ -1,5 +1,6 @@
 let total = 0;
 let scoresDB = new ScoresDB();
+
 //Business Logic
 function ScoresDB(){
   
@@ -49,10 +50,10 @@ function generateTotalScore(currentRoll){
 };
 
 // UI Logic
-function handleHold(){
+function handleHold(playerId){
   document.getElementById("play1").disabled = true;
   document.getElementById("hold1").disabled = true;
-  const player1 = scoresDB.findPlayer(1);
+  const player1 = scoresDB.findPlayer(playerId);
   let player1Div = document.querySelector("div#totalP1");
   player1Div.innerText = null;
   const ul = document.createElement("ul");
@@ -60,15 +61,25 @@ function handleHold(){
   li.append(player1.totalScore);
   ul.append(li);
   player1Div.append(ul);
+  document.getElementById("play2").disabled = false;
+  document.getElementById("hold2").disabled = false;
   }
 
-function handlePlaySubmission(currentRoll){
-  let totalScore = total;
-  let currentScore = generateTotalScore(currentRoll);
 
-  let player1 = new Player(currentRoll, currentScore, totalScore);
-  scoresDB.addPlayer(player1);
 
+function switchFunc(id, player1, currentRoll,currentScore){
+  
+  switch(id){
+    case 1:   
+      handlePlaySubmission1(player1,currentRoll,currentScore);
+      break;
+      case 2:
+      handlePlaySubmission2(currentRoll);
+      break;
+  }
+}
+
+function handlePlaySubmission1(player1, currentRoll,currentScore){
 
   if(currentRoll <= 1)
   {
@@ -78,33 +89,71 @@ function handlePlaySubmission(currentRoll){
   document.getElementById("play1").disabled = true;
   document.getElementById("hold1").disabled = true
 }
-  
   else {
     
-    let foundPlayer = scoresDB.findPlayer(1);
-    player1.addScore(scoresDB ,foundPlayer, currentScore);
+    player1.addScore(scoresDB, player1, currentScore);
     document.querySelector("div#rollP1").innerText = "Current Roll: " + player1.currentRoll;
     document.querySelector("div#scoreP1").innerText = "Current Score: " + player1.currentScore;
   }
-
 }
 
+function handlePlaySubmission2(player,currentRoll,currentScore){
+  if(currentRoll <= 1)
+  {
+  player.totalScore = 0;
+  document.querySelector("div#rollP2").innerText = " Current Roll: " + player.currentRoll;
+  document.querySelector("div#scoreP2").innerText = player.totalScore;
+  document.getElementById("play1").disabled = false;
+  document.getElementById("hold1").disabled = false;
+}
+  else {
+    
+    player.addScore(scoresDB, player, currentScore);
+    document.querySelector("div#rollP2").innerText = "Current Roll: " + player.currentRoll;
+    document.querySelector("div#scoreP2").innerText = "Current Score: " + player.currentScore;
+  }
+}
+
+
 window.addEventListener("load", function(event) {
-
-
   let holdButton = document.querySelector("button#hold1");
+
+  let playerId = 1;
   document.querySelector("form#game1").addEventListener("submit", function(event){
+    let totalScore = total;
     const currentRoll = rollDice();
-    handlePlaySubmission(currentRoll);
+    let currentScore = generateTotalScore(currentRoll);
+    // let player1 = new Player(currentRoll, currentScore, totalScore);
+    tempPlayer1 = scoresDB.addPlayer(player1);
+    
+    if(currentRoll == 1) {
+      let player1 = new Player(currentRoll, currentScore, totalScore);
+    }
+    
+    else {totalScore = total + currentRoll}
+
     event.preventDefault();
+  
+  
+  
+  
+  
   });
-  
-  
   
   holdButton.addEventListener("click", function(event){
-    handleHold();
+    handleHold(playerId);
   });
-  // document.querySelector("form#game2").addEventListener("submit", handlePlaySubmission);
+
+document.querySelector("div#game2").addEventListener("click", function(event){
+  const currentRoll = rollDice();
+  let currentScore = generateTotalScore(currentRoll);
+  switchFunc(player2, currentRoll, currentScore);
+  event.preventDefault();
+
+
+
+});
 
 })
+
 
