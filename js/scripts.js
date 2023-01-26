@@ -2,6 +2,7 @@ let total = 0;
 let scoresDB = new ScoresDB();
 //Business Logic
 function ScoresDB(){
+  
   this.players = {};
   this.currentId = 0;
 }
@@ -23,16 +24,14 @@ ScoresDB.prototype.findPlayer = function(id) {
   return false;
 };
 
-Player.prototype.addScore = function(scoreDBInstance, currentScore) {
-
-  Object.keys(scoreDBInstance.players).forEach(function(key) {
-    const player = scoreDBInstance.findPlayer(key);
+Player.prototype.addScore = function(scoreDBInstance, id, currentScore) {
+  
+Object.keys(scoreDBInstance.players).forEach(function(id) {
+    
+    const player = scoreDBInstance.findPlayer(id);
+   
     player.totalScore = currentScore;
   });
-  
-  
-  
-  player.totalScore = total + currentScore;
 }
 
 function Player(currentRoll, currentScore, totalScore){
@@ -54,11 +53,12 @@ function generateTotalScore(currentRoll){
 // UI Logic
 function handleHold(currentRoll){
   const player1 = scoresDB.findPlayer(1);
-  let totalScore1 = player1.currentScore;
     document.getElementById("play1").disabled = true;
     document.getElementById("hold1").disabled = true;
-    window.alert("current score:" + totalScore1);
-}
+    window.alert("current score:" + player1.totalScore);
+
+
+  }
 
 function handlePlaySubmission(currentRoll){
   let totalScore = total;
@@ -80,7 +80,7 @@ function handlePlaySubmission(currentRoll){
   else {
     
     let foundPlayer = scoresDB.findPlayer(1);
-    player1.addScore(foundPlayer, currentScore);
+    player1.addScore(scoresDB ,foundPlayer, currentScore);
     document.querySelector("div#rollP1").innerText = "Current Roll: " + player1.currentRoll;
     document.querySelector("div#scoreP1").innerText = "Current Score: " + player1.currentScore;
   }
