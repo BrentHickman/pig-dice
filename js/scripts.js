@@ -27,9 +27,7 @@ ScoresDB.prototype.findPlayer = function(id) {
 Player.prototype.addScore = function(scoreDBInstance, id, currentScore) {
   
 Object.keys(scoreDBInstance.players).forEach(function(id) {
-    
     const player = scoreDBInstance.findPlayer(id);
-   
     player.totalScore = currentScore;
   });
 }
@@ -51,13 +49,17 @@ function generateTotalScore(currentRoll){
 };
 
 // UI Logic
-function handleHold(currentRoll){
+function handleHold(){
+  document.getElementById("play1").disabled = true;
+  document.getElementById("hold1").disabled = true;
   const player1 = scoresDB.findPlayer(1);
-    document.getElementById("play1").disabled = true;
-    document.getElementById("hold1").disabled = true;
-    window.alert("current score:" + player1.totalScore);
-
-
+  let player1Div = document.querySelector("div#totalP1");
+  player1Div.innerText = null;
+  const ul = document.createElement("ul");
+  const li = document.createElement("li");
+  li.append(player1.totalScore);
+  ul.append(li);
+  player1Div.append(ul);
   }
 
 function handlePlaySubmission(currentRoll){
@@ -89,9 +91,10 @@ function handlePlaySubmission(currentRoll){
 
 window.addEventListener("load", function(event) {
 
-  const currentRoll = rollDice();
+
   let holdButton = document.querySelector("button#hold1");
   document.querySelector("form#game1").addEventListener("submit", function(event){
+    const currentRoll = rollDice();
     handlePlaySubmission(currentRoll);
     event.preventDefault();
   });
@@ -99,7 +102,7 @@ window.addEventListener("load", function(event) {
   
   
   holdButton.addEventListener("click", function(event){
-    handleHold(currentRoll);
+    handleHold();
   });
   // document.querySelector("form#game2").addEventListener("submit", handlePlaySubmission);
 
